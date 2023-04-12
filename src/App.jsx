@@ -212,7 +212,7 @@ if (sortOrder === "oldest") {
         <div>
           <button onClick={toggleSortOrder}>Currently Displaying {sortOrder === "newest" ? "Oldest - Newest" : "Newest - Oldest"}</button>
         </div>
-        <div>
+        <div class='form-group'>
           <label htmlFor="log-types">Log Level:</label>
           <select id="log-types" value={logType} onChange={handleLogTypeChange}>
             <option value="">All</option>
@@ -220,11 +220,15 @@ if (sortOrder === "oldest") {
             <option value="Warn">Warn</option>
             <option value="Error">Error</option>
           </select>
-        </div>
-        <div>
           <label htmlFor="contentid-dropdown">Content ID:</label>
           <select id="contentid-dropdown" value={selectedContentId} onChange={handleContentIdChange}>
           {/* options */}
+          </select>
+          <label for="module-name">Module Name:</label>
+          <select id="module-name">
+            <option value="module1">Module 1</option>
+            <option value="module2">Module 2</option>
+            <option value="module3">Module 3</option>
           </select>
         </div>
         <div>
