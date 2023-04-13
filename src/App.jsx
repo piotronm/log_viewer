@@ -28,7 +28,6 @@ function App() {
     return "";
   }
   
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -87,12 +86,34 @@ contentIdDropdown.value = 'All';
     setFileSize(fileSizeInMB.toFixed(3));
   };
   
-  
-  
   const handleExport = () => {
-    const filteredText = data.join('\n');
-    const blob = new Blob([filteredText], {type: "text/plain;charset=utf-8"});
+    const filteredDataText = data.filter((item) => {
+      // Filter based on searchTerm
+      if (searchTerm && !item.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
+      }
+      // Filter based on logType
+      if (logType && !item.toLowerCase().includes(logType.toLowerCase())) {
+        return false;
+      }
+      // Filter based on selectedContentId
+      if (selectedContentId && !item.includes(selectedContentId)) {
+        return false;
+      }
+      // Filter based on startDate
+      if (startDate && moment(item.slice(0, 19), "YYYY-MM-DD HH:mm:ss").isBefore(startDate)) {
+        return false;
+      }
+      // Filter based on endDate
+      if (endDate && moment(item.slice(0, 19), "YYYY-MM-DD HH:mm:ss").isAfter(endDate)) {
+        return false;
+      }
+      return true;
+    }).join('\n');
+    
+    const blob = new Blob([filteredDataText], {type: "text/plain;charset=utf-8"});
     const fileName = "filtered_data.txt";
+    
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
       // For IE browser
       window.navigator.msSaveOrOpenBlob(blob, fileName);
@@ -104,7 +125,7 @@ contentIdDropdown.value = 'All';
       link.download = fileName;
       link.click();
     }
-  }
+  };
   
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
@@ -130,8 +151,6 @@ contentIdDropdown.value = 'All';
     setEndDate(endDate);
   };
   
-  
-
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "newest" ? "oldest" : "newest");
   };
@@ -181,12 +200,9 @@ contentIdDropdown.value = 'All';
     }
   });
 
-
 if (sortOrder === "oldest") {
   filteredData.reverse();
 }
-
-    
 
   return (
     <Router>
@@ -194,7 +210,6 @@ if (sortOrder === "oldest") {
         <div className='header'>
           <Header/>
         </div>
-          
         <div>
           <label for="file-upload" class="custom-file-upload">Choose File</label>
           <input type="file" id='file-upload' onChange={handleFileUpload} /> 
@@ -267,6 +282,5 @@ if (sortOrder === "oldest") {
       </div>
     </Router>
   );    
-}    
-
+}
 export default App
