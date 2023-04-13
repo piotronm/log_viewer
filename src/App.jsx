@@ -97,7 +97,7 @@ contentIdDropdown.value = 'All';
         return false;
       }
       // Filter based on selectedContentId
-      if (selectedContentId && !item.includes(selectedContentId)) {
+      if (selectedContentId && selectedContentId !== 'All' && !item.includes(selectedContentId)) {
         return false;
       }
       // Filter based on startDate
@@ -126,7 +126,7 @@ contentIdDropdown.value = 'All';
       link.click();
     }
   };
-  
+
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -136,9 +136,10 @@ contentIdDropdown.value = 'All';
   };
 
   const handleContentIdChange = (event) => {
-    setSelectedContentId(event.target.value);
-  };
-
+    const value = event.target.value;
+    setSelectedContentId(value === 'All' ? '' : value);
+  };  
+  
   const handleStartDateChange = (event) => {
     const selectedDate = event.target.value;
     const startDate = selectedDate ? new Date(selectedDate) : null;
@@ -231,9 +232,9 @@ if (sortOrder === "oldest") {
           <label htmlFor="log-types">Log Level:</label>
           <select id="log-types" value={logType} onChange={handleLogTypeChange}>
             <option value="">All</option>
-            <option value="Info">Info</option>
-            <option value="Warn">Warn</option>
-            <option value="Error">Error</option>
+            <option value="- Info:">Info</option>
+            <option value="- Warn:">Warn</option>
+            <option value="- Error:">Error</option>
           </select>
           <label htmlFor="contentid-dropdown">Content ID:</label>
           <select id="contentid-dropdown" value={selectedContentId} onChange={handleContentIdChange}>
