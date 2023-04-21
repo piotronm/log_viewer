@@ -65,24 +65,27 @@ function App() {
   });
   
   // Add "All" option to module name dropdown and set it as the default value
-  moduleNames.add('All');
-  const moduleNameDropdown = document.getElementById('module-name-dropdown');
-  if (moduleNameDropdown) {
-    moduleNameDropdown.innerHTML = '';
-    const optionAll = document.createElement('option');
-    optionAll.value = 'All';
-    optionAll.text = 'All';
-    moduleNameDropdown.appendChild(optionAll);
-    moduleNames.forEach((moduleName) => {
-      if (moduleName !== 'All') {
-        const option = document.createElement('option');
-        option.value = moduleName;
-        option.text = moduleName;
-        moduleNameDropdown.appendChild(option);
-      }
-    });
-    moduleNameDropdown.value = 'All';
-  }
+moduleNames.add('All');
+const moduleNameDropdown = document.getElementById('module-name-dropdown');
+if (moduleNameDropdown) {
+  moduleNameDropdown.innerHTML = '';
+  const optionAll = document.createElement('option');
+  optionAll.value = 'All';
+  optionAll.text = 'All';
+  moduleNameDropdown.appendChild(optionAll);
+  moduleNames.forEach((moduleName) => {
+    // Check if moduleName contains only letters and numbers
+    const regex = /^[a-zA-Z0-9]*$/;
+    if (regex.test(moduleName) && moduleName !== 'All') {
+      const option = document.createElement('option');
+      option.value = moduleName;
+      option.text = moduleName;
+      moduleNameDropdown.appendChild(option);
+    }
+  });
+  moduleNameDropdown.value = 'All';
+}
+
       // Extract content IDs from file and populate dropdown
       const contentIds = new Set();
       const contentIdRegex = /contentid-([0-9a-z]+)/gi;
