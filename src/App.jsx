@@ -50,37 +50,35 @@ function App() {
       setData(convertedData);
 
   // Extract module names from file and populate dropdown
-  const moduleNames = new Set();
-  const moduleNameRegex = /\[([^\[\]]*?)\]/gi;
-  lines.forEach((line) => {
-    const matches = line.match(moduleNameRegex);
-    if (matches) {
-      matches.forEach((match) => {
-        const moduleName = match.slice(1, -1); // Remove brackets
-        if (moduleName.indexOf('contentid') === -1) { // Check if moduleName doesn't contain "contentid"
-          moduleNames.add(moduleName);
-        }
-      });
-    }
-  });
-  
-  // Add "All" option to module name dropdown and set it as the default value
-moduleNames.add('All');
+let moduleNames = ['All'];
+const moduleNameRegex = /\[([^\[\]]*?)\]/gi;
+lines.forEach((line) => {
+  const matches = line.match(moduleNameRegex);
+  if (matches) {
+    matches.forEach((match) => {
+      const moduleName = match.slice(1, -1); // Remove brackets
+      if (moduleName.indexOf('contentid') === -1) { // Check if moduleName doesn't contain "contentid"
+        moduleNames.push(moduleName);
+      }
+    });
+  }
+});
+
+// Sort module names alphabetically (case-insensitive)
+moduleNames.sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }));
+
+// Populate module name dropdown
 const moduleNameDropdown = document.getElementById('module-name-dropdown');
 if (moduleNameDropdown) {
   moduleNameDropdown.innerHTML = '';
-  const optionAll = document.createElement('option');
-  optionAll.value = 'All';
-  optionAll.text = 'All';
-  moduleNameDropdown.appendChild(optionAll);
   moduleNames.forEach((moduleName) => {
     // Check if moduleName contains only letters and numbers
     const regex = /^[a-zA-Z0-9]*$/;
-    if (regex.test(moduleName) && moduleName !== 'All') {
-      const option = document.createElement('option');
-      option.value = moduleName;
-      option.text = moduleName;
-      moduleNameDropdown.appendChild(option);
+    if (regex.test(moduleName)) {
+    const option = document.createElement('option');
+    option.value = moduleName;
+    option.text = moduleName;
+    moduleNameDropdown.appendChild(option);
     }
   });
   moduleNameDropdown.value = 'All';
