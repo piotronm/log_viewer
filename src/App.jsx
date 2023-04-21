@@ -179,7 +179,8 @@ function App() {
   };  
 
   const handleModuleNameChange = (event) => {
-    setSelectedModuleName(event.target.value);
+    const value = event.target.value;
+    setSelectedModuleName(value === 'All' ? '' : value);
   };  
   
   const handleStartDateChange = (event) => {
