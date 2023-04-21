@@ -50,33 +50,28 @@ function App() {
       setData(convertedData);
 
   // Extract module names from file and populate dropdown
-  const moduleNames = new Set();
+const moduleNameDropdown = document.getElementById('module-name-dropdown');
+if (moduleNameDropdown) {
+  let moduleNames = ['All'];
   const moduleNameRegex = /\[([^\[\]]*?)\]/gi;
+  const uniqueModuleNames = new Set();
   lines.forEach((line) => {
     const matches = line.match(moduleNameRegex);
     if (matches) {
       matches.forEach((match) => {
         const moduleName = match.slice(1, -1); // Remove brackets
         if (moduleName.indexOf('contentid') === -1) { // Check if moduleName doesn't contain "contentid"
-          moduleNames.add(moduleName);
+          uniqueModuleNames.add(moduleName);
         }
       });
     }
   });
-  
-  // Add "All" option to module name dropdown and set it as the default value
-moduleNames.add('All');
-const moduleNameDropdown = document.getElementById('module-name-dropdown');
-if (moduleNameDropdown) {
+  moduleNames = ['All', ...Array.from(uniqueModuleNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }))];
   moduleNameDropdown.innerHTML = '';
-  const optionAll = document.createElement('option');
-  optionAll.value = 'All';
-  optionAll.text = 'All';
-  moduleNameDropdown.appendChild(optionAll);
   moduleNames.forEach((moduleName) => {
     // Check if moduleName contains only letters and numbers
     const regex = /^[a-zA-Z0-9]*$/;
-    if (regex.test(moduleName) && moduleName !== 'All') {
+    if (regex.test(moduleName)) {
       const option = document.createElement('option');
       option.value = moduleName;
       option.text = moduleName;
@@ -85,6 +80,7 @@ if (moduleNameDropdown) {
   });
   moduleNameDropdown.value = 'All';
 }
+
 
       // Extract content IDs from file and populate dropdown
       const contentIds = new Set();
@@ -125,59 +121,56 @@ if (moduleNameDropdown) {
 
   const handleExport = () => {
     const filterInfo = `Filters:
+    File size: ${fileSize || 'none'} MB
     Search term: ${searchTerm || 'none'}
     Log type: ${logType || 'none'}
-    File size: ${fileSize || 'none'} MB
-    Start date: ${startDate || 'none'}
-    End date: ${endDate || 'none'}
     Content ID: ${selectedContentId || 'none'}
     Module name: ${selectedModuleName || 'none'}
-    Sort order: ${sortOrder}`;
-    const filteredDataText = `${filterInfo}\n\n${data.filter((item) => {
-      // Filter based on selectedModuleName
-      if (selectedModuleName !== 'All' && !item.includes(`[${selectedModuleName}]`)) {
-        return false;
-      }
-      // Filter based on searchTerm
+    Sort order: ${sortOrder}
+    Start date: ${startDate || 'none'}
+    End date: ${endDate || 'none'}`;
+  
+    const filteredData = data.filter((item) => {
+      // Filter based on search term
       if (searchTerm && !item.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false;
       }
-      // Filter based on logType
-      if (logType && !item.toLowerCase().includes(logType.toLowerCase())) {
+  
+      // Filter based on log type
+      if (logType && !item.toLowerCase().includes(` ${logType.toLowerCase()} `)) {
         return false;
       }
-      // Filter based on selectedContentId
-      if (selectedContentId && selectedContentId !== 'All' && !item.includes(selectedContentId)) {
+  
+      // Filter based on content ID
+      if (selectedContentId && !item.includes(`contentid-${selectedContentId}`)) {
         return false;
       }
-      // Filter based on startDate
-      if (startDate && moment.utc(item.slice(0, 23)).isBefore(moment.utc(startDate))) {
+  
+      // Filter based on module name
+      if (selectedModuleName && !item.includes(`[${selectedModuleName}]`)) {
         return false;
       }
-      // Filter based on endDate
-      if (endDate && moment.utc(item.slice(0, 23)).isAfter(moment.utc(endDate))) {
+  
+      // Filter based on date range
+      if (startDate && moment.utc(item.slice(0, 23)).isBefore(startDate)) {
         return false;
       }
+      if (endDate && moment.utc(item.slice(0, 23)).isAfter(endDate)) {
+        return false;
+      }
+  
       return true;
-    }).join('\n')}`;
-    
-    
-    const blob = new Blob([filteredDataText], {type: "text/plain;charset=utf-8"});
-    const fileName = "filtered_data.txt";
-    
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      // For IE browser
-      window.navigator.msSaveOrOpenBlob(blob, fileName);
-    } else {
-      // For other browsers
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      link.click();
-    }
-  };
-
+    });
+  
+    const filteredDataText = `${filterInfo}\n\n${filteredData.join('\n')}`;
+    const element = document.createElement('a');
+    const file = new Blob([filteredDataText], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = 'filteredData.txt';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };  
+  
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
