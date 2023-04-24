@@ -135,7 +135,6 @@ if (moduleNameDropdown) {
   function resetFilters() {
     setSearchTerm('');
     setLogType('');
-    setFileSize(null);
     setStartDate(null);
     setEndDate(null);
     setSelectedContentId('');
