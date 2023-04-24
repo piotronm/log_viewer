@@ -66,7 +66,7 @@ setUserIdData(userIds);
 const moduleNameDropdown = document.getElementById('module-name-dropdown');
 if (moduleNameDropdown) {
   let moduleNames = ['All'];
-  const moduleNameRegex = /\[([^\[\]]*?)\]/gi;
+  const moduleNameRegex = /\[([^\[\]]*?[\w-]+[^\[\]]*?)\]/gi; // modified regex to include "-"
   const uniqueModuleNames = new Set();
   lines.forEach((line) => {
     const matches = line.match(moduleNameRegex);
@@ -82,8 +82,8 @@ if (moduleNameDropdown) {
   moduleNames = ['All', ...Array.from(uniqueModuleNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }))];
   moduleNameDropdown.innerHTML = '';
   moduleNames.forEach((moduleName) => {
-    // Check if moduleName contains only letters and numbers
-    const regex = /^[a-zA-Z0-9]*$/;
+    // Check if moduleName contains only letters, numbers, and "-"
+    const regex = /^[a-zA-Z0-9-_]*$/;
     if (regex.test(moduleName)) {
       const option = document.createElement('option');
       option.value = moduleName;
@@ -93,6 +93,7 @@ if (moduleNameDropdown) {
   });
   moduleNameDropdown.value = 'All';
 }
+
 
 
       // Extract content IDs from file and populate dropdown
