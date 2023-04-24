@@ -364,7 +364,7 @@ if (sortOrder === "oldest") {
           {machineData.map((machineData, index) => (
           <strong key={index}>{`${index > 0 ? ', ' : ''}${machineData}`}</strong>))}      
           </div>
-          <div className='cew-versio'>
+          <div className='cew-version'>
             <label>CEW Version: {cewVersion} </label>
 
           </div>
