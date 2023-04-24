@@ -17,7 +17,7 @@ function App() {
   const [userIdData, setUserIdData] = useState([]);
   const [machineData, setMachineData] = useState([]);
   const [cewVersion, setCewVersion] = useState ('');
-
+  const [startupPath, setStartupPath] = useState("");
 
   function getClass(str) {
     if (str && str.length >= 31) {
@@ -93,6 +93,14 @@ lines.forEach((line) => {
 const cewVersionsArray = Array.from(cewVersions);
 setCewVersion(cewVersionsArray);
 
+// Startup Path
+const startupPathRegex = /startupArguments:\s*\[([^\]]+)\]/i;
+lines.forEach((line) => {
+  const matches = line.match(startupPathRegex);
+  if (matches && matches[1]) {
+    setStartupPath(matches[1]);
+  }
+});
 
   // Extract module names from file and populate dropdown
 const moduleNameDropdown = document.getElementById('module-name-dropdown');
@@ -364,10 +372,8 @@ if (sortOrder === "oldest") {
           {machineData.map((machineData, index) => (
           <strong key={index}>{`${index > 0 ? ', ' : ''}${machineData}`}</strong>))}      
           </div>
-          <div className='cew-version'>
-            <label>CEW Version: {cewVersion} </label>
-
-          </div>
+          <div className='cew-version'><label>CEW Version: {cewVersion} </label></div>
+            <div className='startup-path'>Startup Path: {startupPath}</div>
         <div>
           <br/>
           <label htmlFor="search-input" id='search-input'className='search-input'>Search:</label>
