@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import "./App.css";
-import Header from './Header';
 import { BrowserRouter as Router} from 'react-router-dom';
 import moment from 'moment-timezone';
 
@@ -14,6 +13,7 @@ function App() {
   const [selectedContentId, setSelectedContentId] = useState('');
   const [selectedModuleName, setSelectedModuleName] = useState('');
   const [sortOrder, setSortOrder] = useState("newest");
+  const [userIdData, setUserIdData] = useState([]);
 
   function getClass(str) {
     if (str && str.length >= 31) {
@@ -48,6 +48,19 @@ function App() {
         return `${convertedDate} ${restOfLine}`;
       });
       setData(convertedData);
+
+ // Extract user IDs from file
+const userIdsSet = new Set();
+const userIdRegex = /"Username":\s*"(.+?)"/i;
+lines.forEach((line) => {
+  const matches = line.match(userIdRegex);
+  if (matches && matches[1]) {
+    userIdsSet.add(matches[1]);
+  }
+});
+const userIds = Array.from(userIdsSet);
+setUserIdData(userIds);
+
 
   // Extract module names from file and populate dropdown
 const moduleNameDropdown = document.getElementById('module-name-dropdown');
@@ -280,21 +293,38 @@ if (sortOrder === "oldest") {
   filteredData.reverse();
 }
 
+  const handleAboutClick = () => {
+    const top = document.getElementById('top');
+    top.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleContactClick = () => {
+    const bottom = document.getElementById('bottom');
+    bottom.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <Router>
       <div id='top'>
         <div className='header'>
-          <Header/>
-        </div>
+        <h1>Log Viewer</h1>
+          <button className='header-link' onClick={handleAboutClick}>
+            Top of Page
+          </button>
+          <button className='header-link' onClick={handleContactClick}>
+            Bottom of Page
+          </button>
+    </div>
         <div>
           <label for="file-upload" class="custom-file-upload">Choose File</label>
           <input type="file" id='file-upload' onChange={handleFileUpload} /> 
         </div>
-        <div className='file-size'>
-        <div>
-          File size: {fileSize} MB
-        </div>
-        </div>
+        <div className='file-size'>File size: {fileSize} MB</div>
+        <div className='userId'>
+          <label>User ID:</label>
+          {userIdData.map((userId, index) => (
+          <strong key={index}>{`${index > 0 ? ', ' : ''}${userId}`}</strong>))}        
+          </div>
         <div>
           <br/>
           <label htmlFor="search-input" id='search-input'className='search-input'>Search:</label>
