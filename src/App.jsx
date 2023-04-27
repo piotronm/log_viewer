@@ -118,11 +118,10 @@ if (identifierNameDropdown) {
       });
     }
   });
-
   let identifierNames = Array.from(uniqueIdentifierNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }));
   if (identifierNames.length === 0) {
     // If there are no matches, extract anything that comes after "contentIdentifierName:"
-    const noMatchesRegex = /contentIdentifierName:(\S+)/i;
+    const noMatchesRegex = /contentIdentifierName:([^S]+)/gi;
     lines.forEach((line) => {
       const matches = line.match(noMatchesRegex);
       if (matches) {
@@ -141,9 +140,7 @@ if (identifierNameDropdown) {
       identifierNameDropdown.appendChild(option);
     });
     identifierNameDropdown.value = 'All';
-  } else {
-    identifierNameDropdown.innerHTML = '<option>No options available</option>';
-  }
+  } 
 }
 
   // Extract module names from file and populate dropdown
