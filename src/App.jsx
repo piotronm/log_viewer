@@ -106,41 +106,27 @@ lines.forEach((line) => {
 // Extract Identifier names from file and populate dropdown
 const identifierNameDropdown = document.getElementById('identifier-name-dropdown');
 if (identifierNameDropdown) {
-  const identifierNameRegex = /ContentIdentifierName=([^,]+)/gi;
+  let identifierNames = ['All'];
+  const identifierNameRegex = /ContentIdentifierName=([^,]+)/gi; 
   const uniqueIdentifierNames = new Set();
-
   lines.forEach((line) => {
     const matches = line.match(identifierNameRegex);
     if (matches) {
       matches.forEach((match) => {
-        const identifierName = match.slice(21); // Extract everything after "ContentIdentifierName="
+        const identifierName = match.slice(21).replace('=', ''); // Extract everything after "ContentIdentifierName=" and remove "="
         uniqueIdentifierNames.add(identifierName);
       });
     }
   });
-  let identifierNames = Array.from(uniqueIdentifierNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }));
-  if (identifierNames.length === 0) {
-    // If there are no matches, extract anything that comes after "contentIdentifierName:"
-    const noMatchesRegex = /contentIdentifierName:([^S]+)/gi;
-    lines.forEach((line) => {
-      const matches = line.match(noMatchesRegex);
-      if (matches) {
-        identifierNames.push(matches[1]);
-      }
-    });
-  }
-
+  identifierNames = ['All', ...Array.from(uniqueIdentifierNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }))];
   identifierNameDropdown.innerHTML = '';
-  if (identifierNames.length > 0) {
-    identifierNames.unshift('All');
-    identifierNames.forEach((identifierName) => {
+  identifierNames.forEach((identifierName) => {
       const option = document.createElement('option');
       option.value = identifierName;
-      option.text = identifierName.replace('=', ''); // Remove "=" character
+      option.text = identifierName.replace(/['"]+/g, ''); // Remove any quotes and equals sign from the display text
       identifierNameDropdown.appendChild(option);
-    });
-    identifierNameDropdown.value = 'All';
-  } 
+  });
+  identifierNameDropdown.value = 'All';
 }
 
   // Extract module names from file and populate dropdown
