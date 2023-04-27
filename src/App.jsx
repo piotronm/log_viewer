@@ -113,7 +113,7 @@ if (identifierNameDropdown) {
     const matches = line.match(identifierNameRegex);
     if (matches) {
       matches.forEach((match) => {
-        const identifierName = match.slice(21).split(',')[0]; // Extract everything after "ContentIdentifierName=" and only up until the character ','
+        const identifierName = match.slice(21).replace('=', ''); // Extract everything after "ContentIdentifierName=" and remove "="
         uniqueIdentifierNames.add(identifierName);
       });
     }
@@ -123,7 +123,7 @@ if (identifierNameDropdown) {
   identifierNames.forEach((identifierName) => {
       const option = document.createElement('option');
       option.value = identifierName;
-      option.text = identifierName;
+      option.text = identifierName.replace(/['"]+/g, ''); // Remove any quotes and equals sign from the display text
       identifierNameDropdown.appendChild(option);
   });
   identifierNameDropdown.value = 'All';
