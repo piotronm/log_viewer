@@ -205,6 +205,7 @@ if (moduleNameDropdown) {
     setEndDate(null);
     setSelectedContentId('');
     setSelectedModuleName('');
+    setSelectedIdentifierName('');
     setSortOrder('newest');
   
     // Reset dropdowns to their default values
