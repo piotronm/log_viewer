@@ -238,11 +238,24 @@
     margin-right: 20px;
     padding-right: 20px;
 }
-.body {
-
-    
+.highlight {
+    background-color: #fafa06;
+    font-weight: 100;
+    font-size: 17px;
+    color: #000000;
 }
-
+li:nth-child(even) {
+    background-color: #c8c5c5;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    margin-bottom: 2px;
+}
+li:nth-child(odd) {
+    background-color: #ffffff;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    margin-bottom: 2px;
+}  
 
 .footer {
     position: fixed;
