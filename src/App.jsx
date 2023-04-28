@@ -395,17 +395,49 @@ if (sortOrder === "oldest") {
 
   return (
     <Router>
-      <div id='top'>
-        <div className='navigation buttons'>
-        <h1>Log Viewer</h1>
-          <button className='header-link' onClick={handleAboutClick}>
-            Top of Page
-          </button>
-          <button className='header-link' onClick={handleContactClick}>
-            Bottom of Page
-          </button>
-    </div>
+    <div id='top'>
+      <div className='header-wrapper'>
+      <div className='top-row'>
+        <button className='top-of-page' onClick={handleAboutClick}>
+          Top of Page
+        </button>
+          <button className='export' onClick={handleExport}>Export</button>
+        <input type="text" className="search-input" value={searchTerm} onChange={handleSearchInput} placeholder='Search' />
+        <button onClick={resetFilters}>Reset Filters</button>
+        </div>
+      <div className='all-dropdowns'>
+        <label className='dropdown-label' htmlFor="log-types">Log Level:</label>
+        <select className='dropdown-boxes' id="log-types" value={logType} onChange={handleLogTypeChange}>
+          <option value="">All</option>
+          <option value="- Info:">Info</option>
+          <option value="- Warn:">Warn</option>
+          <option value="- Error:">Error</option>
+        </select>
+        <label className='dropdown-label' for="module-name">Module Name:</label>
+        <select className='dropdown-boxes' id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
+          {/* options */}
+        </select>
+          <label className='dropdown-label' for="identifier-name">Content Identifier Name:</label>
+        <select className='dropdown-boxes' id="identifier-name-dropdown" value={selectedIdentifierName} onChange={handleIdentifierNameChange}>
+          {/* options */}
+        </select>
+          <label className='dropdown-label' htmlFor="contentid-dropdown">Content ID:</label>
+        <select className='dropdown-boxes' id="contentid-dropdown" value={selectedContentId} onChange={handleContentIdChange}>
+          {/* options */}
+        </select>
+        </div>
+        <div className='date-time'>
+          <label>Start Date and Time:</label>
+          <input type="datetime-local" onChange={handleStartDateChange} />
+          <label>End Date and Time:</label>
+          <input type="datetime-local" onChange={handleEndDateChange} />
+        </div>
         <div>
+          <button onClick={toggleSortOrder}>Currently Displaying {sortOrder === "newest" ? "Oldest - Newest" : "Newest - Oldest"}</button>
+        </div>
+        </div>
+        <div className='body'>
+        <div className='upload-file'> 
           <label for="file-upload" class="custom-file-upload">Choose File</label>
           <input type="file" id='file-upload' onChange={handleFileUpload} /> 
         </div>
@@ -415,55 +447,16 @@ if (sortOrder === "oldest") {
           <label>User ID:</label>
           {userIdData.map((userId, index) => (
           <strong key={index}>{`${index > 0 ? ', ' : ''}${userId}`}</strong>))}        
-          </div>
-          <div className='machine'>
+        </div>
+        <div className='machine'>
           <label>Machine:</label>  
           {machineData.map((machineData, index) => (
           <strong key={index}>{`${index > 0 ? ', ' : ''}${machineData}`}</strong>))}      
-          </div>
-          <div className='cew-version'><label>CEW Version: {cewVersion} </label></div>
-            <div className='startup-path'>Startup Path: {startupPath}</div>
-        <div>
-          <br/>
-          <label htmlFor="search-input" id='search-input'className='search-input'>Search:</label>
-          <input type="text" id="search-input" value={searchTerm} onChange={handleSearchInput} />
-          <button onClick={resetFilters}>Reset Filters</button>
         </div>
-        <div>
-          <button onClick={toggleSortOrder}>Currently Displaying {sortOrder === "newest" ? "Oldest - Newest" : "Newest - Oldest"}</button>
-        </div>
-        <div className='header-wrapper'>
-          <label htmlFor="log-types">Log Level:</label>
-          <select id="log-types" value={logType} onChange={handleLogTypeChange}>
-            <option value="">All</option>
-            <option value="- Info:">Info</option>
-            <option value="- Warn:">Warn</option>
-            <option value="- Error:">Error</option>
-          </select>
-          <label for="module-name">Module Name:</label>
-          <select id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
-            {/* options */}
-            </select>
-            <label for="identifier-name">Content Identifier Name:</label>
-          <select id="identifier-name-dropdown" value={selectedIdentifierName} onChange={handleIdentifierNameChange}>
-            {/* options */}
-            </select>
-            <label htmlFor="contentid-dropdown">Content ID:</label>
-          <select id="contentid-dropdown" value={selectedContentId} onChange={handleContentIdChange}>
-          {/* options */}
-          </select>
-        </div>
-        <div>
-          <label>Start Date and Time:</label>
-            <input type="datetime-local" onChange={handleStartDateChange} />
-          <label>End Date and Time:</label>
-            <input type="datetime-local" onChange={handleEndDateChange} />
-        </div>
-        <div>
-          <button onClick={handleExport}>Export</button>
-        </div>
-        <ul className='display-items'>
-          {filteredData.map((item, index) => {
+        <div className='cew-version'><label>CEW Version: {cewVersion} </label></div>
+        <div className='startup-path'>Startup Path: {startupPath}</div>
+          <ul className='display-items'>
+            {filteredData.map((item, index) => {
             const parts = item.split(',');
             const regex = new RegExp(`(${searchTerm})`, 'gi');
             const partsHighlighted = parts[0].split(regex);
@@ -482,11 +475,17 @@ if (sortOrder === "oldest") {
               {display}
             </li>
           );
-            })}
+          })}
           </ul>
-        <div id='bottom'>
+        </div>
+      <div id='bottom'>
+        <div className='footer'>
+          <button className='bottom-of-page' onClick={handleContactClick}>
+            Bottom of Page
+          </button>
         </div>
       </div>
+  </div>
     </Router>
   );    
 }
