@@ -19,20 +19,6 @@ function App() {
   const [machineData, setMachineData] = useState([]);
   const [cewVersion, setCewVersion] = useState ('');
   const [startupPath, setStartupPath] = useState("");
-
-  function getClass(str) {
-    if (str && str.length >= 31) {
-      const code = str.slice(27, 31);
-      if (code === "0001") {
-        return "green";
-      } else if (code === "0002") {
-        return "red";
-      } else if (code === "0003") {
-        return "blue";
-      }
-    }
-    return "";
-  }
   
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -463,7 +449,7 @@ if (sortOrder === "oldest") {
           <span>{item}</span>
           );
           return (
-            <li key={index} className={getClass(parts[2])}>
+            <li key={index} className='li-display'>
               {display}
             </li>
           );
