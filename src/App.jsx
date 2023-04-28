@@ -207,7 +207,7 @@ if (moduleNameDropdown) {
     setSelectedModuleName('');
     setSelectedIdentifierName('');
     setSortOrder('newest');
-  
+    
     // Reset dropdowns to their default values
     const contentIdDropdown = document.getElementById('contentid-dropdown');
     if (contentIdDropdown) {
@@ -398,13 +398,12 @@ if (sortOrder === "oldest") {
     <div id='top'>
       <div className='header-wrapper'>
       <div className='top-row'>
-        <button className='top-of-page' onClick={handleAboutClick}>
-          Top of Page
-        </button>
-          <button className='export' onClick={handleExport}>Export</button>
+        <button className='top-of-page' onClick={handleAboutClick}>Top of Page</button>
+        <input className='upload-file' title='Upload File' type="file" id='file-upload' onChange={handleFileUpload} />
         <input type="text" className="search-input" value={searchTerm} onChange={handleSearchInput} placeholder='Search' />
-        <button onClick={resetFilters}>Reset Filters</button>
-        </div>
+        <button className='reset-filters' onClick={resetFilters}>Reset Filters</button>
+        <button className='export' onClick={handleExport}>Export</button>
+      </div>
       <div className='all-dropdowns'>
         <label className='dropdown-label' htmlFor="log-types">Log Level:</label>
         <select className='dropdown-boxes' id="log-types" value={logType} onChange={handleLogTypeChange}>
@@ -427,34 +426,27 @@ if (sortOrder === "oldest") {
         </select>
         </div>
         <div className='date-time'>
-          <label>Start Date and Time:</label>
-          <input type="datetime-local" onChange={handleStartDateChange} />
-          <label>End Date and Time:</label>
-          <input type="datetime-local" onChange={handleEndDateChange} />
+          <label className='start-date'>Start Date and Time:</label>
+          <input className='start-date' id='datetime-id' type="datetime-local" onChange={handleStartDateChange} />
+          <label className='end-date'>End Date and Time:</label>
+          <input className='end-date' type="datetime-local" onChange={handleEndDateChange} />
+          <button className='togglesortorder' onClick={toggleSortOrder}>Currently Displaying {sortOrder === "newest" ? "Oldest - Newest" : "Newest - Oldest"}</button>
         </div>
-        <div>
-          <button onClick={toggleSortOrder}>Currently Displaying {sortOrder === "newest" ? "Oldest - Newest" : "Newest - Oldest"}</button>
         </div>
+        <div className='sub-header'>
+          <label className='file-name'>File Name: <strong className='output-info'>{fileName}</strong></label>
+          <label className='file-size'>File size: <strong className='output-info'>{fileSize}</strong> MB</label>
+            <label className='userId'>User ID:</label>
+            {userIdData.map((userId, index) => (
+            <strong className='output-info' key={index}>{`${index > 0 ? ', ' : ''}${userId}`}</strong>))}        
+          <label className='machine'>Machine: 
+            {machineData.map((machineData, index) => ( 
+            <strong className='machineoutput-info' key={index}>{`${index > 0 ? ', ' : ' '}${machineData}`}</strong>))}      
+          </label>
+          <label className='cew-version'>CEW Version: <strong className='output-info'>{cewVersion}</strong></label>
+          <label className='startup-path'>Startup Path: <strong className='output-info'>{startupPath}</strong></label>
         </div>
         <div className='body'>
-        <div className='upload-file'> 
-          <label for="file-upload" class="custom-file-upload">Choose File</label>
-          <input type="file" id='file-upload' onChange={handleFileUpload} /> 
-        </div>
-        <div className='file-name'>File Name: {fileName}</div>
-        <div className='file-size'>File size: {fileSize} MB</div>
-        <div className='userId'>
-          <label>User ID:</label>
-          {userIdData.map((userId, index) => (
-          <strong key={index}>{`${index > 0 ? ', ' : ''}${userId}`}</strong>))}        
-        </div>
-        <div className='machine'>
-          <label>Machine:</label>  
-          {machineData.map((machineData, index) => (
-          <strong key={index}>{`${index > 0 ? ', ' : ''}${machineData}`}</strong>))}      
-        </div>
-        <div className='cew-version'><label>CEW Version: {cewVersion} </label></div>
-        <div className='startup-path'>Startup Path: {startupPath}</div>
           <ul className='display-items'>
             {filteredData.map((item, index) => {
             const parts = item.split(',');
