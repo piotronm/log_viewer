@@ -401,8 +401,8 @@ if (sortOrder === "oldest") {
         <button className='top-of-page' onClick={handleAboutClick}>Top of Page</button>
         <input className='upload-file' title='Upload File' type="file" id='file-upload' onChange={handleFileUpload} />
         <input type="text" className="search-input" value={searchTerm} onChange={handleSearchInput} placeholder='Search' />
-        <button className='reset-filters' onClick={resetFilters}>Reset Filters</button>
         <button className='export' onClick={handleExport}>Export</button>
+        <button className='reset-filters' onClick={resetFilters}>Reset Filters</button>
       </div>
       <div className='all-dropdowns'>
         <label className='dropdown-label' htmlFor="log-types">Log Level:</label>
@@ -435,7 +435,7 @@ if (sortOrder === "oldest") {
         </div>
         <div className='sub-header'>
           <label className='file-name'>File Name: <strong className='output-info'>{fileName}</strong></label>
-          <label className='file-size'>File size: <strong className='output-info'>{fileSize}</strong> MB</label>
+          <label className='file-size'>File size: <strong className='filesizeoutput-info'>{fileSize}</strong> <label className='filesizebytes'>MB</label></label>
             <label className='userId'>User ID:</label>
             {userIdData.map((userId, index) => (
             <strong className='output-info' key={index}>{`${index > 0 ? ', ' : ''}${userId}`}</strong>))}        
