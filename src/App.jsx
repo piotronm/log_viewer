@@ -11,15 +11,23 @@ function App() {
   const [fileSize, setFileSize] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [selectedContentId, setSelectedContentId] = useState('');
-  const [selectedModuleName, setSelectedModuleName] = useState('');
-  const [selectedIdentifierName, setSelectedIdentifierName] = useState('');
   const [sortOrder, setSortOrder] = useState("newest");
   const [userIdData, setUserIdData] = useState([]);
   const [machineData, setMachineData] = useState([]);
   const [cewVersion, setCewVersion] = useState ('');
   const [startupPath, setStartupPath] = useState("");
-  const [moduleNames, setModuleNames] = useState(['All']);
+  const [moduleNameOptions, setModuleNameOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('');
+  
+  useEffect(() => {
+    // Filter data using regular expression
+    const regex = /%/g;
+    const filteredOptions = data.filter(item => regex.test(item));
+    setModuleNameOptions(filteredOptions);
+  }, [data]);
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
   
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -89,64 +97,6 @@ lines.forEach((line) => {
     setStartupPath(matches[1]);
   }
 });
-
-// Extract Identifier names from file and populate dropdown
-const identifierNameDropdown = document.getElementById('identifier-name-dropdown');
-if (identifierNameDropdown) {
-  let identifierNames = ['All'];
-  const identifierNameRegex = /ContentIdentifierName=([^,]+)/gi; 
-  const uniqueIdentifierNames = new Set();
-  lines.forEach((line) => {
-    const matches = line.match(identifierNameRegex);
-    if (matches) {
-      matches.forEach((match) => {
-        const identifierName = match.slice(21).replace('=', ''); // Extract everything after "ContentIdentifierName=" and remove "="
-        uniqueIdentifierNames.add(identifierName);
-      });
-    }
-  });
-  identifierNames = ['All', ...Array.from(uniqueIdentifierNames).sort((a, b) => a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' }))];
-  identifierNameDropdown.innerHTML = '';
-  identifierNames.forEach((identifierName) => {
-      const option = document.createElement('option');
-      option.value = identifierName;
-      option.text = identifierName.replace(/['"]+/g, ''); // Remove any quotes and equals sign from the display text
-      identifierNameDropdown.appendChild(option);
-  });
-  identifierNameDropdown.value = 'All';
-}
-
-      // Extract content IDs from file and populate dropdown
-      const contentIds = new Set();
-      const contentIdRegex = /contentid-([0-9a-z]+)/gi;
-      lines.forEach((line) => {
-        const matches = line.match(contentIdRegex);
-        if (matches) {
-          matches.forEach((match) => {
-            const contentId = match.replace('contentid-', '');
-            contentIds.add(contentId);
-          });
-        }
-      });
-      // Add "All" option to content ID dropdown and set it as the default value
-      contentIds.add('All');
-      const contentIdDropdown = document.getElementById('contentid-dropdown');
-      if (contentIdDropdown) {
-        contentIdDropdown.innerHTML = '';
-          const optionAll = document.createElement('option');
-          optionAll.value = 'All';
-          optionAll.text = 'All';
-          contentIdDropdown.appendChild(optionAll);
-          contentIds.forEach((contentId) => {
-      if (contentId !== 'All') {
-        const option = document.createElement('option');
-        option.value = contentId;
-        option.text = contentId;
-        contentIdDropdown.appendChild(option);
-        }
-      });
-    contentIdDropdown.value = 'All';
-      }
     };
     reader.readAsText(file);
     const fileSizeInMB = file.size / (1024 * 1024);
@@ -158,9 +108,6 @@ if (identifierNameDropdown) {
     setLogType('');
     setStartDate(null);
     setEndDate(null);
-    setSelectedContentId('');
-    setSelectedModuleName('');
-    setSelectedIdentifierName('');
     setSortOrder('newest');
     
     // Reset dropdowns to their default values
@@ -188,9 +135,7 @@ if (identifierNameDropdown) {
     Startup Path: ${startupPath || 'none'}
     Search term: ${searchTerm || 'none'}
     Log type: ${logType || 'none'}
-    Content ID: ${selectedContentId || 'none'}
-    Module name: ${selectedModuleName || 'none'}
-    Content Identifier Name: ${selectedIdentifierName || 'none'}
+
     Sort order: ${sortOrder}
     Start date: ${startDate || 'none'}
     End date: ${endDate || 'none'}`;
@@ -203,21 +148,6 @@ if (identifierNameDropdown) {
   
       // Filter based on log type
       if (logType && !item.toLowerCase().includes(` ${logType.toLowerCase()} `)) {
-        return false;
-      }
-  
-      // Filter based on content ID
-      if (selectedContentId && !item.includes(`contentid-${selectedContentId}`)) {
-        return false;
-      }
-  
-      // Filter based on module name
-      if (selectedModuleName && !item.includes(`[${selectedModuleName}]`)) {
-        return false;
-      }
-
-      // Filter based on identifier name
-      if (selectedIdentifierName && !item.includes(`[${selectedIdentifierName}]`)) {
         return false;
       }
   
@@ -248,21 +178,6 @@ if (identifierNameDropdown) {
   const handleLogTypeChange = (event) => {
     setLogType(event.target.value);
   };
-
-  const handleContentIdChange = (event) => {
-    const value = event.target.value;
-    setSelectedContentId(value === 'All' ? '' : value);
-  };  
-
-  const handleModuleNameChange = (event) => {
-    const value = event.target.value;
-    setSelectedModuleName(value === 'All' ? '' : value);
-  };  
-
-  const handleIdentifierNameChange = (event) => {
-    const value = event.target.value;
-    setSelectedIdentifierName(value === 'All' ? '' : value);
-  };  
   
   const handleStartDateChange = (event) => {
     const selectedDate = event.target.value;
@@ -300,16 +215,8 @@ if (identifierNameDropdown) {
     if (logType && !item.toLowerCase().includes(logType.toLowerCase())) {
       return false;
     }
-    // Filter based on selectedContentId
-    if (selectedContentId && !item.includes(`contentid-${selectedContentId}`)) {
-      return false;
-    }
-    // Filter based on selectedModuleName
-    if (selectedModuleName && !item.includes(`[${selectedModuleName}]`)) {
-      return false;
-    }
-    // Filter based on selectedIdentifierName
-    if (selectedIdentifierName && !item.toLowerCase().includes(selectedIdentifierName.toLowerCase())) {
+    // Filter based on Module Namew
+    if (selectedOption && !item.toLowerCase().includes(selectedOption.toLowerCase())) {
       return false;
     }
     // Filter based on startDate
@@ -347,24 +254,6 @@ if (sortOrder === "oldest") {
     bottom.scrollIntoView({ behavior: 'smooth' });
   };
   
-  useEffect(() => {
-    const moduleNameRegex = /ModuleName=([^,]+)/gi;
-    const uniqueModuleNames = new Set();
-    lines.forEach((line) => {
-      const matches = line.match(moduleNameRegex);
-      if (matches) {
-        matches.forEach((match) => {
-          const moduleName = match.slice(11).replace('=', '');
-          uniqueModuleNames.add(moduleName);
-        });
-      }
-    });
-    const sortedModuleNames = Array.from(uniqueModuleNames).sort((a, b) =>
-      a.localeCompare(b, undefined, { ignorePunctuation: true, sensitivity: 'base' })
-    );
-    setModuleNames(['All', ...sortedModuleNames]);
-  }, [data]);
-  
   return (
     <Router>
     <div id='top'>
@@ -384,26 +273,12 @@ if (sortOrder === "oldest") {
           <option value="- Warn:">Warn</option>
           <option value="- Error:">Error</option>
         </select>
-        <label className='dropdown-label' for="module-name">Module Name:</label>
-        <select
-  id="module-name-dropdown"
-  value={selectedModuleName}
-  onChange={(event) => setSelectedModuleName(event.target.value)}
->
-  {moduleNames.map((moduleName, index) => (
-    <option key={index} value={moduleName}>
-      {moduleName}
-    </option>
-  ))}
-</select>
-
-          <label className='dropdown-label' for="identifier-name">Content Identifier Name:</label>
-        <select className='dropdown-boxes' id="identifier-name-dropdown" value={selectedIdentifierName} onChange={handleIdentifierNameChange}>
-          {/* options */}
-        </select>
-          <label className='dropdown-label' htmlFor="contentid-dropdown">Content ID:</label>
-        <select className='dropdown-boxes' id="contentid-dropdown" value={selectedContentId} onChange={handleContentIdChange}>
-          {/* options */}
+        <label className='dropdown-label' htmlFor="module-name-dropdown">Module Name:</label>
+        <select className='dropdown-boxes' id="module-name-dropdown" value={selectedOption} onChange={handleOptionChange}>
+          <option value="">All</option>
+          {moduleNameOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
         </select>
         </div>
         <div className='date-time'>
