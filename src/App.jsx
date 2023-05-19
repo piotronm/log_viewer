@@ -17,17 +17,15 @@ function App() {
   const [cewVersion, setCewVersion] = useState ('');
   const [startupPath, setStartupPath] = useState("");
   const [moduleNameOptions, setModuleNameOptions] = useState([]);
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedModuleName, setselectedModuleName] = useState('');
   
   useEffect(() => {
-    // Filter data using regular expression
-    const regex = /%/g;
-    const filteredOptions = data.filter(item => regex.test(item));
+    // Filter data by Module Name
+    const moduleNameRegex = /%/g;
+    const filteredOptions = data.filter(item => moduleNameRegex.test(item));
     setModuleNameOptions(filteredOptions);
+
   }, [data]);
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
   
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -178,7 +176,11 @@ lines.forEach((line) => {
   const handleLogTypeChange = (event) => {
     setLogType(event.target.value);
   };
-  
+
+  const handleModuleNameChange = (event) => {
+    setselectedModuleName(event.target.value);
+  };
+
   const handleStartDateChange = (event) => {
     const selectedDate = event.target.value;
     const startDate = selectedDate ? new Date(selectedDate) : null;
@@ -216,7 +218,7 @@ lines.forEach((line) => {
       return false;
     }
     // Filter based on Module Namew
-    if (selectedOption && !item.toLowerCase().includes(selectedOption.toLowerCase())) {
+    if (selectedModuleName && !item.toLowerCase().includes(selectedModuleName.toLowerCase())) {
       return false;
     }
     // Filter based on startDate
@@ -274,7 +276,7 @@ if (sortOrder === "oldest") {
           <option value="- Error:">Error</option>
         </select>
         <label className='dropdown-label' htmlFor="module-name-dropdown">Module Name:</label>
-        <select className='dropdown-boxes' id="module-name-dropdown" value={selectedOption} onChange={handleOptionChange}>
+        <select className='dropdown-boxes' id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
           <option value="">All</option>
           {moduleNameOptions.map((option, index) => (
             <option key={index} value={option}>{option}</option>
