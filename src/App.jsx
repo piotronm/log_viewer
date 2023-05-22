@@ -18,12 +18,24 @@ function App() {
   const [startupPath, setStartupPath] = useState("");
   const [moduleNameOptions, setModuleNameOptions] = useState([]);
   const [selectedModuleName, setselectedModuleName] = useState('');
+  const [contentNameOptions, setContentNameOptions] = useState([]);
+  const [selectedContentName, setselectedContentName] = useState('');
+  const [contentIDNameOptions, setContentIDNameOptions] = useState([]);
+  const [selectedContentIDName, setselectedContentIDName] = useState('');
   
   useEffect(() => {
     // Filter data by Module Name
     const moduleNameRegex = /%/g;
     const filteredOptions = data.filter(item => moduleNameRegex.test(item));
     setModuleNameOptions(filteredOptions);
+    // Filter data by Content Identifier Name
+    const moduleContentRegex = /%/g;
+    const filteredContentNameOptions = data.filter(item => moduleContentRegex.test(item));
+    setContentNameOptions(filteredContentNameOptions);
+    // Filter data by Content ID
+    const moduleContentIDRegex = /%/g;
+    const filteredContentIDNameOptions = data.filter(item => moduleContentIDRegex.test(item));
+    setContentIDNameOptions(filteredContentIDNameOptions);
 
   }, [data]);
   
@@ -181,6 +193,14 @@ lines.forEach((line) => {
     setselectedModuleName(event.target.value);
   };
 
+  const handleContentNameChange = (event) => {
+    setselectedContentName(event.target.value);
+  };
+
+  const handleContentIDNameChange = (event) => {
+    setselectedContentIDName(event.target.value);
+  };
+
   const handleStartDateChange = (event) => {
     const selectedDate = event.target.value;
     const startDate = selectedDate ? new Date(selectedDate) : null;
@@ -217,8 +237,16 @@ lines.forEach((line) => {
     if (logType && !item.toLowerCase().includes(logType.toLowerCase())) {
       return false;
     }
-    // Filter based on Module Namew
+    // Filter based on Module Name
     if (selectedModuleName && !item.toLowerCase().includes(selectedModuleName.toLowerCase())) {
+      return false;
+    }
+    // Filter based on Content Identifier Name
+    if (selectedContentName && !item.toLowerCase().includes(selectedContentName.toLowerCase())) {
+      return false;
+    }
+    // Filter based on Content ID Name
+    if (selectedContentIDName && !item.toLowerCase().includes(selectedContentIDName.toLowerCase())) {
       return false;
     }
     // Filter based on startDate
@@ -279,6 +307,20 @@ if (sortOrder === "oldest") {
         <select className='dropdown-boxes' id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
           <option value="">All</option>
           {moduleNameOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </select>
+        <label className='dropdown-label' htmlFor="content-name-dropdown">Content Identifier Name:</label>
+        <select className='dropdown-boxes' id="content-name-dropdown" value={selectedContentName} onChange={handleContentNameChange}>
+          <option value="">All</option>
+          {contentNameOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
+        </select>
+        <label className='dropdown-label' htmlFor="contentID-name-dropdown">Content ID:</label>
+        <select className='dropdown-boxes' id="contentID-name-dropdown" value={selectedContentIDName} onChange={handleContentIDNameChange}>
+          <option value="">All</option>
+          {contentIDNameOptions.map((option, index) => (
             <option key={index} value={option}>{option}</option>
           ))}
         </select>
