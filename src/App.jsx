@@ -57,10 +57,21 @@ filteredContentNameOptions.forEach(item => {
 const contentNameOptions = Array.from(contentNameOptionsSet);
 setContentNameOptions(contentNameOptions);
      
-    // Filter data by Content ID
-    const moduleContentIDRegex = /%/g;
-    const filteredContentIDNameOptions = data.filter(item => moduleContentIDRegex.test(item));
-    setContentIDNameOptions(filteredContentIDNameOptions);
+    // Filter data by Content ID Name
+    const contentIDRegex = /\[contentid-([^[\]]+)\]/gi;
+    const filteredContentIDNameOptions = data.filter(item => contentIDRegex.test(item));
+    const contentIDNameOptionsSet = new Set();
+    filteredContentIDNameOptions.forEach(item => {
+      const matches = item.match(contentIDRegex);
+      if (matches && matches.length > 0) {
+        matches.forEach(match => {
+          const option = match.replace('[contentid-', '').replace(']', '');
+          contentIDNameOptionsSet.add(option);
+        });
+      }
+    });
+    const contentIDNameOptions = Array.from(contentIDNameOptionsSet);
+    setContentIDNameOptions(contentIDNameOptions);
 
   }, [data]);
   
