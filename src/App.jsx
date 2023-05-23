@@ -34,7 +34,7 @@ function App() {
     if (matches && matches.length > 0) {
       matches.forEach(match => {
         const option = match.replace('[', '').replace(']', '');
-        if (!option.toLowerCase().includes('contentid-')) {
+        if (/^[A-Za-z0-9-]+$/.test(option) && !option.toLowerCase().includes('contentid-')) {
           moduleNameOptionsSet.add(option);
         }
       });
