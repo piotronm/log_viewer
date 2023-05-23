@@ -24,12 +24,28 @@ function App() {
   const [selectedContentIDName, setselectedContentIDName] = useState('');
   
   useEffect(() => {
-    // Filter data by Module Name
-    const moduleNameRegex = /%/g;
-    const filteredOptions = data.filter(item => moduleNameRegex.test(item));
-    setModuleNameOptions(filteredOptions);
+      // Filter data by Module Name
+  const moduleNameRegex = /\[([^\[\]]*?[\w-]+[^\[\]]*?)\]/gi;
+  const filteredOptions = data.filter(item => moduleNameRegex.test(item));
+  // Extract the options within '[' and ']', remove duplicates, and exclude "contentid"
+  const moduleNameOptionsSet = new Set();
+  filteredOptions.forEach(item => {
+    const matches = item.match(moduleNameRegex);
+    if (matches && matches.length > 0) {
+      matches.forEach(match => {
+        const option = match.replace('[', '').replace(']', '');
+        if (!option.toLowerCase().includes('contentid-')) {
+          moduleNameOptionsSet.add(option);
+        }
+      });
+    }
+  });
+  // Sort the options alphabetically
+  const sortedModuleNameOptions = Array.from(moduleNameOptionsSet).sort((a, b) =>
+    a.localeCompare(b, undefined, { sensitivity: 'base' }));
+  setModuleNameOptions(sortedModuleNameOptions);
     // Filter data by Content Identifier Name
-    const moduleContentRegex = /%/g;
+    const moduleContentRegex = /12345/g;
     const filteredContentNameOptions = data.filter(item => moduleContentRegex.test(item));
     setContentNameOptions(filteredContentNameOptions);
     // Filter data by Content ID
@@ -304,12 +320,12 @@ if (sortOrder === "oldest") {
           <option value="- Error:">Error</option>
         </select>
         <label className='dropdown-label' htmlFor="module-name-dropdown">Module Name:</label>
-        <select className='dropdown-boxes' id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
-          <option value="">All</option>
-          {moduleNameOptions.map((option, index) => (
-            <option key={index} value={option}>{option}</option>
-          ))}
-        </select>
+          <select className='dropdown-boxes' id="module-name-dropdown" value={selectedModuleName} onChange={handleModuleNameChange}>
+            <option value="">All</option>
+            {moduleNameOptions.map((option, index) => (
+              <option key={index} value={option}>{option}</option>
+            ))}
+          </select>
         <label className='dropdown-label' htmlFor="content-name-dropdown">Content Identifier Name:</label>
         <select className='dropdown-boxes' id="content-name-dropdown" value={selectedContentName} onChange={handleContentNameChange}>
           <option value="">All</option>
