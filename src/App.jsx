@@ -155,20 +155,9 @@ lines.forEach((line) => {
     setStartDate(null);
     setEndDate(null);
     setSortOrder('newest');
-    
-    // Reset dropdowns to their default values
-    const contentIdDropdown = document.getElementById('contentid-dropdown');
-    if (contentIdDropdown) {
-      contentIdDropdown.value = 'All';
-    }
-    const moduleNameDropdown = document.getElementById('module-name-dropdown');
-    if (moduleNameDropdown) {
-      moduleNameDropdown.value = 'All';
-    }
-    const identifierNameDropdown = document.getElementById('identifier-name-dropdown');
-    if (identifierNameDropdown) {
-      identifierNameDropdown.value = 'All';
-    }
+    setselectedContentIDName('');
+    setselectedContentName('');
+    setselectedModuleName('');
   }
 
   const handleExport = () => {
@@ -181,7 +170,9 @@ lines.forEach((line) => {
     Startup Path: ${startupPath || 'none'}
     Search term: ${searchTerm || 'none'}
     Log type: ${logType || 'none'}
-
+    Module Name: ${selectedModuleName || 'none'}
+    Content Identifier Name: ${selectedContentName || 'none'}
+    Content ID Name: ${selectedContentIDName || 'none'}
     Sort order: ${sortOrder}
     Start date: ${startDate || 'none'}
     End date: ${endDate || 'none'}`;
@@ -191,12 +182,22 @@ lines.forEach((line) => {
       if (searchTerm && !item.toLowerCase().includes(searchTerm.toLowerCase())) {
         return false;
       }
-  
       // Filter based on log type
       if (logType && !item.toLowerCase().includes(` ${logType.toLowerCase()} `)) {
         return false;
       }
-  
+      // Filter based on Module Name
+      if (selectedModuleName && !item.includes(`[${selectedModuleName}]`)) {
+        return false;
+      }
+      // Filter based on Content Identifier Name
+      if (selectedContentName && !item.includes(`[${selectedContentName}]`)) {
+        return false;
+      }
+      // Filter based on Content ID
+      if (selectedContentIDName && !item.includes(`contentid-${selectedContentIDName}`)) {
+        return false;
+      }
       // Filter based on date range
       if (startDate && moment.utc(item.slice(0, 23)).isBefore(startDate)) {
         return false;
@@ -204,18 +205,17 @@ lines.forEach((line) => {
       if (endDate && moment.utc(item.slice(0, 23)).isAfter(endDate)) {
         return false;
       }
-  
       return true;
     });
   
     const filteredDataText = `${filterInfo}\n\n${filteredData.join('\n')}`;
     const element = document.createElement('a');
-    const file = new Blob([filteredDataText], {type: 'text/plain'});
+    const file = new Blob([filteredDataText], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = 'filteredData.txt';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
-  };  
+  };
   
   const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
